@@ -18,6 +18,13 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     const serviceCollection = client.db("service-review").collection("service");
     try {
+        // service create api
+        app.post('/services', async(req, res)=> {
+            const service = req.body;
+            console.log(service)
+            const results = await serviceCollection.insertOne(service);
+            res.send(results);
+        })
         app.get('/', async (req, res) => {
             res.send('service review assignment running')
         })
