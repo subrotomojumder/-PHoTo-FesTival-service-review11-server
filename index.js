@@ -51,8 +51,9 @@ async function run() {
             res.send(results);
         })
         //get review api
-        app.get('/reviews', async(req, res)=> {
-            const query = {};
+        app.get('/reviews/:id', async(req, res)=> {
+            const id = req.params.id;
+            const query = {serviceId: id};
             const reviews = await reviewCollection.find(query).toArray();
             res.send(reviews);
         })
