@@ -57,7 +57,12 @@ async function run() {
             const reviews = await reviewCollection.find(query).toArray();
             res.send(reviews);
         })
-
+        app.get('/reviews', async(req, res)=> {
+            const user = req.query.email;
+            const query = {reviewerEmail: user}
+            const reviews = await reviewCollection.find(query).toArray();
+            res.send(reviews);
+        })
         app.get('/', async (req, res) => {
             res.send('service review assignment running')
         })
