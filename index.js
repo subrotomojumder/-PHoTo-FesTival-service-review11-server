@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
@@ -13,18 +14,17 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.uxk5wr6.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-
-
 async function run() {
     const serviceCollection = client.db("service-review").collection("service");
     const reviewCollection = client.db("service-review").collection("reviews");
     try {
-        // service create api
-        app.post('/services', async (req, res) => {
-            const service = req.body;
-            const results = await serviceCollection.insertOne(service);
-            res.send(results);
+        // get json web token 
+        app.post('/jwt', async(req, res)=> {
+            const user = req.body;
+            console.log(user)
         })
+        // service create api
+        
         // get services api
         app.get('/services', async (req, res) => {
             const limit = parseInt(req.query.limit);
@@ -63,13 +63,23 @@ async function run() {
             const reviews = await reviewCollection.find(query).toArray();
             res.send(reviews);
         })
-        // delete reviews 
         app.delete('/reviews/:id', async(req, res)=> {
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
             const results = await reviewCollection.deleteOne(query);
             res.send(results);
         })
+        app.patch('/reviews/:id', async(req, res)=>{
+            const id = req.params.id;
+            const review = req.body;
+            const filter = {_id: ObjectId(id)};
+            const updateReview = {
+                $set: review
+            };
+            const results =  await reviewCollection.updateOne(filter, updateReview);
+            res.send(results);
+        })
+        
         app.get('/', async (req, res) => {
             res.send('service review assignment running')
         })
