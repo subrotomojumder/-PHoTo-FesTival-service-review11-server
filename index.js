@@ -63,6 +63,13 @@ async function run() {
             const reviews = await reviewCollection.find(query).toArray();
             res.send(reviews);
         })
+        // delete reviews 
+        app.delete('/reviews/:id', async(req, res)=> {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const results = await reviewCollection.deleteOne(query);
+            res.send(results);
+        })
         app.get('/', async (req, res) => {
             res.send('service review assignment running')
         })
